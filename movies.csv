@@ -1,0 +1,4 @@
+movie_id,title,year,director_id,genre
+1,Inception,2010,cnolan,Science Fiction
+2,Interstellar,2014,cnolan,Science Fiction
+3,Arrival,2016,dvilleneuve,Science Fiction

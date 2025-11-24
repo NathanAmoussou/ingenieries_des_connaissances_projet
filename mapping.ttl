@@ -1,0 +1,95 @@
+@prefix rr:     <http://www.w3.org/ns/r2rml#> .
+@prefix rml:    <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql:     <http://semweb.mmlab.be/ns/ql#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix schema: <https://schema.org/> .
+@prefix ex:     <http://example.org/data/> .
+
+@base <http://example.org/> .
+
+# TriplesMap pour les films (CSV -> schema:Movie)
+
+<#MovieMap>
+    a rr:TriplesMap ;
+
+    # Source logique : le CSV
+    rml:logicalSource [
+        rml:source "movies.csv" ;
+        rml:referenceFormulation ql:CSV
+    ] ;
+
+    # Sujet : URI du film
+    rr:subjectMap [
+        rr:template "http://example.org/movie/{movie_id}" ;
+        rr:class schema:Movie
+    ] ;
+
+    # Titre du film
+    rr:predicateObjectMap [
+        rr:predicate schema:name ;
+        rr:objectMap [ rml:reference "title" ]
+    ] ;
+
+    # Année de sortie
+    rr:predicateObjectMap [
+        rr:predicate schema:datePublished ;
+        rr:objectMap [
+            rml:reference "year" ;
+            rr:datatype xsd:gYear
+        ]
+    ] ;
+
+    # Genre
+    rr:predicateObjectMap [
+        rr:predicate schema:genre ;
+        rr:objectMap [ rml:reference "genre" ]
+    ] ;
+
+    # Lien vers le réalisateur (join par director_id)
+    rr:predicateObjectMap [
+        rr:predicate schema:director ;
+        rr:objectMap [
+            rr:template "http://example.org/person/{director_id}"
+        ]
+    ] .
+
+# TriplesMap pour les réalisateurs (JSON -> schema:Person)
+
+<#PersonMap>
+    a rr:TriplesMap ;
+
+    # Source logique : le JSON
+    rml:logicalSource [
+        rml:source "directors.json" ;
+        rml:referenceFormulation ql:JSONPath ;
+        rml:iterator "$.directors[*]"
+    ] ;
+
+    # Sujet : URI de la personne, basé sur l'id
+    rr:subjectMap [
+        rr:template "http://example.org/person/{$.id}" ;
+        rr:class schema:Person
+    ] ;
+
+    # Nom de la personne
+    rr:predicateObjectMap [
+        rr:predicate schema:name ;
+        rr:objectMap [ rml:reference "$.name" ]
+    ] ;
+
+    # Année de naissance
+    rr:predicateObjectMap [
+        rr:predicate schema:birthDate ;
+        rr:objectMap [
+            rml:reference "$.birthYear" ;
+            rr:datatype xsd:gYear
+        ]
+    ] ;
+
+    # Pays de naissance (on laisse en texte)
+    rr:predicateObjectMap [
+        rr:predicate schema:birthPlace ;
+        rr:objectMap [ rml:reference "$.country" ]
+    ] .

@@ -1,0 +1,16 @@
+{
+  "directors": [
+    {
+      "id": "cnolan",
+      "name": "Christopher Nolan",
+      "birthYear": 1970,
+      "country": "UK"
+    },
+    {
+      "id": "dvilleneuve",
+      "name": "Denis Villeneuve",
+      "birthYear": 1967,
+      "country": "Canada"
+    }
+  ]
+}

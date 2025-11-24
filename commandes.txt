@@ -1,0 +1,32 @@
+sudo apt update
+
+sudo apt install docker.io
+
+sudo usermod -aG docker "$USER"
+
+docker run hello-world
+
+docker pull rmlio/rmlmapper-java
+
+docker run rmlio/rmlmapper-java:latest -h
+
+cd lab00_mrl_hands_on
+
+docker run --rm -v "$PWD":/data \
+  rmlio/rmlmapper-java:latest \
+  --mappingfile mapping.ttl \
+  --outputfile output.ttl \
+  --serialization turtle
+
+sudo apt install default-jre
+
+java -jar rmlmapper.jar \
+  --mappingfile mapping.ttl \
+  --outputfile output.ttl \
+  --serialization turtle
+
+docker run --rm -v "$PWD":/data \
+  rmlio/rmlmapper-java:latest \
+  --mappingfile mapping.ttl \
+  --outputfile output.ttl \
+  --serialization turtle
