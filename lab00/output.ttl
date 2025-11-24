@@ -1,0 +1,34 @@
+@prefix ex: <http://example.org/data/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix schema: <https://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/movie/1> a schema:Movie;
+  schema:datePublished "2010"^^xsd:gYear;
+  schema:director <http://example.org/person/cnolan>;
+  schema:genre "Science Fiction";
+  schema:name "Inception" .
+
+<http://example.org/movie/2> a schema:Movie;
+  schema:datePublished "2014"^^xsd:gYear;
+  schema:director <http://example.org/person/cnolan>;
+  schema:genre "Science Fiction";
+  schema:name "Interstellar" .
+
+<http://example.org/movie/3> a schema:Movie;
+  schema:datePublished "2016"^^xsd:gYear;
+  schema:director <http://example.org/person/dvilleneuve>;
+  schema:genre "Science Fiction";
+  schema:name "Arrival" .
+
+<http://example.org/person/cnolan> a schema:Person;
+  schema:birthDate "1970"^^xsd:gYear;
+  schema:birthPlace "UK";
+  schema:name "Christopher Nolan" .
+
+<http://example.org/person/dvilleneuve> a schema:Person;
+  schema:birthDate "1967"^^xsd:gYear;
+  schema:birthPlace "Canada";
+  schema:name "Denis Villeneuve" .

@@ -10,7 +10,7 @@ docker pull rmlio/rmlmapper-java
 
 docker run rmlio/rmlmapper-java:latest -h
 
-cd lab00_mrl_hands_on
+cd ingeieries_des_connaisances_projet/lab00
 
 docker run --rm -v "$PWD":/data \
   rmlio/rmlmapper-java:latest \
