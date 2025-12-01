@@ -14,8 +14,8 @@ def clean_val(v: str) -> str:
 def clean_row(row: dict) -> dict:
     return {clean_key(k): clean_val(v) for k, v in row.items()}
 
-in_path = "projet/data/global_air_pollution_data.csv"
-out_path = "projet/data/pollution_facelift.json"
+in_path = "projet/data/pollution.csv"
+out_path = "projet/data/pollution.json"
 
 out = {"measurements": []}
 skipped = 0

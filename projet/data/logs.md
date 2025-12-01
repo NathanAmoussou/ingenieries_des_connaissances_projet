@@ -8,7 +8,7 @@ Le projet impose d’intégrer **deux sources hétérogènes**, notamment avec *
 
 Nous avons développé un script `csv_to_json.py` qui :
 
-1. **Lit le CSV** de pollution (`global_air_pollution_data.csv`).
+1. **Lit le CSV** de pollution (`pollution.csv`).
 2. **Nettoie les en-têtes** : suppression d’un caractère BOM (`utf-8-sig`) et suppression de tabulations/espaces cachés dans certains noms de colonnes (ex : `co_aqi_value` était présent sous une forme “polluée” avec tabulation).
 3. **Nettoie les valeurs** : `strip()` (espaces), et conversions de types pour les mesures numériques (`to_int`) afin d’obtenir des valeurs exploitables ensuite en RDF (littéraux typés).
 4. **Restructure les données** en JSON en regroupant les informations AQI dans des objets imbriqués (`aqi`, `iaqi`) inspirés d’un format JSON courant d’API AQI (plus natural pour JSON + plus facile à parcourir avec JSONPath en RML).
@@ -30,7 +30,7 @@ Ces lignes ont été **ignorées** (skip) car elles ne permettent pas :
 
 Résultat conversion :
 
-* `pollution_facelift.json` généré avec **23035** enregistrements valides,
+* `pollution.json` généré avec **23035** enregistrements valides,
 * **428** lignes ignorées car incomplètes.
 
 ### Résultat attendu pour la suite (RML)
