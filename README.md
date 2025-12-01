@@ -1,12 +1,12 @@
 Figure out a use case to integrate 2 independent data sources:
-• Select source data: CSV/JSON files (local FS or over http/Web API) or RDB
-==> link between green areas and air quality in cities
+
+Select source data: CSV/JSON files (local FS or over http/Web API) or RDB
 
 Datasets used:
-• Open Spaces and Green Areas
-https://data.unhabitat.org/pages/open-spaces-and-green-areas
+- [Open Spaces and Green Areas](https://data.unhabitat.org/pages/open-spaces-and-green-areas)
+- [Global Air Pollution Data](https://www.kaggle.com/datasets/sazidthe1/global-air-pollution-data)
+Link: link between green areas and air quality in cities.
 
-• Global Air Pollution Data
-https://www.kaggle.com/datasets/sazidthe1/global-air-pollution-data
-
-
+Use cases to integrate 2 independent data sources:
+- "In what city we have pollution value X and green space value Y?"
+- "Top 10 cities with highest pollution level and lowest green space value"
