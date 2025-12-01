@@ -23,8 +23,17 @@ This will ensure we use one CSV file and one JSON file.
 2) Select and understand target vocabularies:
 • Schema.org, DBpedia, https://lov.linkeddata.es/dataset/lov/ …
 
-Vocabularies used:
+Goals: select **classes** and **properties**
 
+Main classes: **City**, and **Country**. They are common to both datasets.
+Main properties: 
+- **City**: `isInCountry`, `hasName`, `hasCityCode`, etc. (might change over time)
+- **Country**: `hasName`, `isInRegion`, `isInSubRegion`, etc.
+
+Concerning the data from the dataset, we could add properties such as: `aqiValue`, `coValue`, `no3Value`, etc, and `greenArea``````
+
+
+Geonames
 
 
 
