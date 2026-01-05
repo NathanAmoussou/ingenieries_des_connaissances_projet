@@ -20,6 +20,9 @@ First we will convert the .xlsx file (1) to .csv.
 And using the JSON format form (3), we will convert the .csv file (2) to .json.
 This will ensure we use one CSV file and one JSON file.
 
+After applying our Python normalization script (cleaning parentheses, accents, and slugs), we increased the number of joined cities from 365 to 435 (+19%).
+The remaining discrepancies are largely due to data incompleteness (cities present in one dataset but genuinely missing from the other), rather than naming mismatches. We consider this subset of 435 common cities sufficient and high-quality for our Knowledge Graph analysis.
+
 **----------------------------------------------------------------------------------------**
 
 2) Select and understand target vocabularies:
@@ -91,11 +94,108 @@ Air Quality Index (AQI): The sosa:observedProperty points to dbr:Air_quality_ind
 
 **----------------------------------------------------------------------------------------**
 
-3)  Translate both sources into RDF using RML
+3) Translate both sources into RDF using RML
+
+For the resource URIs we use the strategies:
+
+1) Administrative entities:
+
+Regions: http://example.org/region/{Region_Name}
+
+Countries: http://example.org/country/{Country_Name}
+
+Cities: http://example.org/city/{Country_Name}/{City_Name}
+
+
+2) Observations:
+
+http://example.org/obs/{Measure_Type}/{Country_Name}/{City_Name}
+
+
+@prefix schema: <http://schema.org/> .
+@prefix sosa:   <http://www.w3.org/ns/sosa/> .
+@prefix ex:     <http://example.org/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt:   <http://qudt.org/vocab/unit/> .
 
 
 
+ex:region/Asia a schema:AdministrativeArea ;
+    schema:name "Asia" ;
+    schema:description "SDG Region" .
 
+ex:region/Southern_Asia a schema:AdministrativeArea ;
+    schema:name "Southern Asia" ;
+    schema:description "SDG Sub-Region" ;
+    schema:containedInPlace ex:region/Asia .
+
+ex:country/Afghanistan a schema:Country ;
+    schema:name "Afghanistan" ;
+    schema:containedInPlace ex:region/Southern_Asia .
+
+ex:city/Afghanistan/Kabul a schema:City ;
+    schema:name "Kabul" ;
+    schema:identifier "AF_KABUL" ;
+    schema:containedInPlace ex:country/Afghanistan .
+
+
+
+# Green Areas
+ex:obs/GreenShare/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2020"^^xsd:gYear ;
+    sosa:observedProperty <http://dbpedia.org/resource/Urban_green_space> ;
+    schema:name "Green Area Share" ;
+    sosa:hasSimpleResult "3.51"^^xsd:double ;
+    sosa:hasResultUnit qudt:PERCENT .
+
+ex:obs/GreenCapita/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2020"^^xsd:gYear ;
+    sosa:observedProperty <http://dbpedia.org/resource/Urban_green_space> ;
+    schema:name "Green Area Per Capita" ;
+    sosa:hasSimpleResult "1.71"^^xsd:double ;
+    rdfs:comment "Unit: square meters per person" .
+
+
+# Global AQI
+ex:obs/AQI/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:observedProperty <http://dbpedia.org/resource/Air_quality_index> ;
+    sosa:hasSimpleResult "64"^^xsd:integer ;
+    schema:qualitativeValue "Moderate" .
+
+# O3
+ex:obs/O3/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2025"^^xsd:gYear ; 
+    sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7> ;
+    sosa:hasSimpleResult "41"^^xsd:integer ;
+    schema:qualitativeValue "Good" .
+
+# NO2
+ex:obs/NO2/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2025"^^xsd:gYear ;
+    sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8> ;
+    sosa:hasSimpleResult "0"^^xsd:integer ;
+    schema:qualitativeValue "Good" .
+
+# CO
+ex:obs/CO/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2025"^^xsd:gYear ;
+    sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/10> ;
+    sosa:hasSimpleResult "0"^^xsd:integer ;
+    schema:qualitativeValue "Good" .
+
+# PM2.5
+ex:obs/PM25/Afghanistan/Kabul a sosa:Observation ;
+    sosa:hasFeatureOfInterest ex:city/Afghanistan/Kabul ;
+    sosa:resultTime "2025"^^xsd:gYear ;
+    sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ;
+    sosa:hasSimpleResult "64"^^xsd:integer ;
+    schema:qualitativeValue "Moderate" .
 
 
 
