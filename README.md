@@ -1,9 +1,6 @@
-
 # Knowledge Engineering Project
-
-1) Figure out a use case to integrate 2 independent data sources:
-
-Select source data: CSV/JSON files (local FS or over http/Web API) or RDB
+1. Figure out a use case to integrate 2 independent data sources:
+	- Select source data: CSV/JSON files (local FS or over http/Web API) or RDB
 
 Datasets used:
 - [1. Open Spaces and Green Areas (XLS)](https://data.unhabitat.org/pages/open-spaces-and-green-areas)
@@ -30,7 +27,7 @@ Main properties:
 - **City**: `isInCountry`, `hasName`, `hasCityCode`, etc. (might change over time)
 - **Country**: `hasName`, `isInRegion`, `isInSubRegion`, etc.
 
-Concerning the data from the dataset, we could add properties such as: `aqiValue`, `coValue`, `no3Value`, etc, and `greenArea``````
+Concerning the data from the dataset, we could add properties such as: `aqiValue`, `coValue`, `no3Value`, etc, and `greenArea`
 
 
 Geonames
