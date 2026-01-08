@@ -1,0 +1,53 @@
+PREFIX schema: <http://schema.org/>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?countryName ?cityName ?pm25 ?greenM2 ?avgPm25 ?avgGreenM2
+WHERE {
+  # (1) National averages per country (computed on matched cities only)
+  {
+    SELECT ?country ?countryName
+           (AVG(?pm25d_in) AS ?avgPm25)
+           (AVG(?greenD_in) AS ?avgGreenM2)
+    WHERE {
+      ?city_in schema:containedInPlace ?country .
+      ?country schema:name ?countryName .
+
+      ?pmObs_in a sosa:Observation ;
+                sosa:hasFeatureOfInterest ?city_in ;
+                sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ;
+                sosa:hasSimpleResult ?pm25_in .
+
+      ?greenObs_in a sosa:Observation ;
+                   sosa:hasFeatureOfInterest ?city_in ;
+                   schema:name "Green Area Per Capita" ;
+                   sosa:hasSimpleResult ?green_in .
+
+      BIND(xsd:decimal(?pm25_in)  AS ?pm25d_in)
+      BIND(xsd:decimal(?green_in) AS ?greenD_in)
+    }
+    GROUP BY ?country ?countryName
+    HAVING (COUNT(DISTINCT ?city_in) >= 2)
+  }
+
+  # (2) Cities compared to their national averages
+  ?city schema:containedInPlace ?country ;
+        schema:name ?cityName .
+
+  ?pmObs a sosa:Observation ;
+         sosa:hasFeatureOfInterest ?city ;
+         sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ;
+         sosa:hasSimpleResult ?pm25 .
+
+  ?greenObs a sosa:Observation ;
+            sosa:hasFeatureOfInterest ?city ;
+            schema:name "Green Area Per Capita" ;
+            sosa:hasSimpleResult ?greenM2 .
+
+  BIND(xsd:decimal(?pm25)    AS ?pm25d)
+  BIND(xsd:decimal(?greenM2) AS ?greenD)
+
+  FILTER(?pm25d > ?avgPm25 && ?greenD < ?avgGreenM2)
+}
+ORDER BY DESC(?pm25d)
+LIMIT 200

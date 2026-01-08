@@ -1,0 +1,28 @@
+PREFIX schema: <http://schema.org/>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+
+SELECT ?countryName ?cityName ?pm25 ?pm25Cat ?greenM2
+WHERE {
+  VALUES (?pm25Th ?greenTh) { (100 10.0) }   # <-- à ajuster après test
+
+  ?city a schema:City ;
+        schema:name ?cityName ;
+        schema:containedInPlace ?country .
+  ?country a schema:Country ;
+           schema:name ?countryName .
+
+  ?pmObs a sosa:Observation ;
+         sosa:hasFeatureOfInterest ?city ;
+         sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ;
+         sosa:hasSimpleResult ?pm25 ;
+         schema:qualitativeValue ?pm25Cat .
+
+  ?greenObs a sosa:Observation ;
+            sosa:hasFeatureOfInterest ?city ;
+            schema:name "Green Area Per Capita" ;
+            sosa:hasSimpleResult ?greenM2 .
+
+  FILTER(?pm25 > ?pm25Th && ?greenM2 < ?greenTh)
+}
+ORDER BY DESC(?pm25) ASC(?greenM2)
+LIMIT 50

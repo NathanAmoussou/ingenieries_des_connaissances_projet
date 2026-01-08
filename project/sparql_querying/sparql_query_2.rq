@@ -1,0 +1,34 @@
+PREFIX schema: <http://schema.org/>
+PREFIX sosa:   <http://www.w3.org/ns/sosa/>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?countryName ?nCities ?avgPm25 ?avgGreenM2
+WHERE {
+  {
+    SELECT ?countryName
+           (COUNT(DISTINCT ?city) AS ?nCities)
+           (AVG(?pm25d) AS ?avgPm25)
+           (AVG(?greenD) AS ?avgGreenM2)
+    WHERE {
+      ?city schema:containedInPlace ?country .
+      ?country schema:name ?countryName .
+
+      ?pmObs a sosa:Observation ;
+             sosa:hasFeatureOfInterest ?city ;
+             sosa:observedProperty <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ;
+             sosa:hasSimpleResult ?pm25 .
+
+      ?greenObs a sosa:Observation ;
+                sosa:hasFeatureOfInterest ?city ;
+                schema:name "Green Area Per Capita" ;
+                sosa:hasSimpleResult ?greenM2 .
+
+      BIND(xsd:decimal(?pm25)    AS ?pm25d)
+      BIND(xsd:decimal(?greenM2) AS ?greenD)
+    }
+    GROUP BY ?countryName
+    HAVING (COUNT(DISTINCT ?city) >= 3)
+  }
+}
+ORDER BY DESC(?avgPm25)
+LIMIT 15
