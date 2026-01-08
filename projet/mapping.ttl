@@ -1,0 +1,312 @@
+@base <http://example.org/rules/> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix schema: <http://schema.org/> .
+@prefix ex: <http://example.org/> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt: <http://qudt.org/vocab/unit/> .
+
+# =======================================================
+# 1. MAPPING DES VILLES (Source: clean_green.csv)
+# =======================================================
+<#CityMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_green.csv" ;
+    rml:referenceFormulation ql:CSV
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/city/{country_join}/{city_join}" ;
+    rr:class schema:City
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:name ;
+    rr:objectMap [ rml:reference "City Name" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:identifier ;
+    rr:objectMap [ rml:reference "City Code" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:containedInPlace ;
+    rr:objectMap [ rr:template "http://example.org/country/{country_join}" ]
+  ] .
+
+# =======================================================
+# 2. MAPPING DES PAYS (Source: clean_green.csv)
+# =======================================================
+<#CountryMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_green.csv" ;
+    rml:referenceFormulation ql:CSV
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/country/{country_join}" ;
+    rr:class schema:Country
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:name ;
+    rr:objectMap [ rml:reference "Country or Territory Name" ]
+  ] .
+
+# =======================================================
+# 3. OBSERVATIONS ESPACES VERTS (Source: clean_green.csv)
+# =======================================================
+
+# A. Green Share (%)
+<#GreenShareMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_green.csv" ;
+    rml:referenceFormulation ql:CSV
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/GreenShare/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dbpedia.org/resource/Urban_green_space> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:name ;
+    rr:objectMap [ rr:constant "Green Area Share" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "green_share_2020" ; rr:datatype xsd:double ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasResultUnit ;
+    rr:objectMap [ rr:constant qudt:PERCENT ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:resultTime ;
+    rr:objectMap [ 
+      rr:constant "2020" ; 
+      rr:datatype xsd:gYear 
+     ]
+  ] .
+
+# B. Green Per Capita
+<#GreenCapitaMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_green.csv" ;
+    rml:referenceFormulation ql:CSV
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/GreenCapita/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dbpedia.org/resource/Urban_green_space> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:name ;
+    rr:objectMap [ rr:constant "Green Area Per Capita" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "green_m2_per_capita_2020" ; rr:datatype xsd:double ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:resultTime ;
+    rr:objectMap [ rr:constant "2020"^^xsd:gYear ]
+  ] .
+
+# =======================================================
+# 4. OBSERVATIONS POLLUTION (Source: clean_pollution.json)
+# =======================================================
+
+# A. AQI Global
+<#PollutionAQIMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_pollution.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.measurements[*]"
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/aqi/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dbpedia.org/resource/Air_quality_index> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "aqi.value" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:qualitativeValue ;
+    rr:objectMap [ rml:reference "aqi.category" ]
+  ] .
+
+# B. Ozone (O3) - Eionet ID 7
+<#PollutionO3Map> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_pollution.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.measurements[*]"
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/o3/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/7> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "iaqi.o3.value" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:qualitativeValue ;
+    rr:objectMap [ rml:reference "iaqi.o3.category" ]
+  ] .
+
+# C. NO2 - Eionet ID 8
+<#PollutionNO2Map> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_pollution.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.measurements[*]"
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/no2/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/8> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "iaqi.no2.value" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:qualitativeValue ;
+    rr:objectMap [ rml:reference "iaqi.no2.category" ]
+  ] .
+
+# D. CO - Eionet ID 10
+<#PollutionCOMap> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_pollution.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.measurements[*]"
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/co/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/10> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "iaqi.co.value" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:qualitativeValue ;
+    rr:objectMap [ rml:reference "iaqi.co.category" ]
+  ] .
+
+# E. PM2.5 - Eionet ID 6001
+<#PollutionPM25Map> a rr:TriplesMap ;
+  rml:logicalSource [
+    rml:source "clean_pollution.json" ;
+    rml:referenceFormulation ql:JSONPath ;
+    rml:iterator "$.measurements[*]"
+  ] ;
+
+  rr:subjectMap [
+    rr:template "http://example.org/obs/pm25/{country_join}/{city_join}" ;
+    rr:class sosa:Observation
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasFeatureOfInterest ;
+    rr:objectMap [ rr:template "http://example.org/city/{country_join}/{city_join}" ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:observedProperty ;
+    rr:objectMap [ rr:constant <http://dd.eionet.europa.eu/vocabulary/aq/pollutant/6001> ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate sosa:hasSimpleResult ;
+    rr:objectMap [ rml:reference "iaqi.pm25.value" ; rr:datatype xsd:integer ]
+  ] ;
+
+  rr:predicateObjectMap [
+    rr:predicate schema:qualitativeValue ;
+    rr:objectMap [ rml:reference "iaqi.pm25.category" ]
+  ] .
