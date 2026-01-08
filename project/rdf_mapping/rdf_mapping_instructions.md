@@ -1,10 +1,14 @@
 # RML Mapping
 
-## Step 1: RDF Mapping Definition
+## Step 1: Define an RDF graph example
+
+Before mapping, we define (and validate with the professor) an example of the RDF graph we aim to build in `rdf_example_graph.tll`.
+
+## Step 2: Define the RDF mapping
 
 In `mapping.ttl`, we define a mapping from `clean_green.csv` and `clean_pollution.json` to a RDF graph.
 
-## Step 2: Install RMLMapper (on Ubuntu)
+## Step 3: Install RMLMapper (on Ubuntu)
 
 Install Java 21 or higher:
 
@@ -33,10 +37,12 @@ echo "alias rmlmapper='java -jar ~/opt/rmlmapper/rmlmapper.jar'" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## Step 3: Map RDF Graph with RMLMapper
+## Step 4: Map RDF graph with RMLMapper
 
 In `rdf_mapping/`, execute:
 
 ```bash
 rmlmapper -m mapping.ttl -o rdf_graph.ttl
 ```
+
+It ouputs the RDF graph `rdf_graph.ttl`.
